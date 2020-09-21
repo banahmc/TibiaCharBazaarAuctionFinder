@@ -1,2 +1,2 @@
 # TibiaCharBazaarAuctionFinder
-Tibia Char Bazaar Auction Findder
+Tibia Char Bazaar Auction Finder
