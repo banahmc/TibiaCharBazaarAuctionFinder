@@ -27,10 +27,13 @@ namespace FhatFinder.Console
 
             foreach (var auction in auctions)
             {
-                if (auction.Outfit == outfitFilter.Outfit &&
-                    auction.Addons == outfitFilter.Addons)
+                foreach (var outfit in outfitFilter.OutfitsAndAddons)
                 {
-                    matchingAuctions.Add(auction);
+                    if (auction.Outfit == outfit.Outfit &&
+                        auction.Addons == outfit.Addons)
+                    {
+                        matchingAuctions.Add(auction);
+                    }
                 }
             }
 

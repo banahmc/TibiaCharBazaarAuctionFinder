@@ -1,8 +1,10 @@
-﻿namespace FhatFinder.Shared.Filters
+﻿using FhatFinder.Shared.Dtos;
+using System.Collections.Generic;
+
+namespace FhatFinder.Shared.Filters
 {
     public interface IOutfitFilter
     {
-        Outfit Outfit { get; }
-        Addon Addons { get; }
+        List<OutfitAndAddonDto> OutfitsAndAddons { get; }
     }
 }
