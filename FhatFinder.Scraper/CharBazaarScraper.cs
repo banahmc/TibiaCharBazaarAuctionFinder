@@ -54,7 +54,7 @@ namespace FhatFinder.Scraper
             }
 
             _logger.LogInformation($"CharBazaar - Found {auctions.Count()} auction(s) on {numberOfPages} page(s)");
-            _logger.LogInformation($"Requests stats - " +
+            _logger.LogInformation($"CharBazaar Stats - " +
                 $"requests sent: {_success.Count + _fail.Count}, " +
                 $"success: {_success.Count}, " +
                 $"fail: {_fail.Count}, " +
@@ -97,14 +97,14 @@ namespace FhatFinder.Scraper
             {
                 if (!_success.Add(url))
                 {
-                    _logger.LogInformation($"CharBazaar - Tried to add already existing url to success hashset: {url}");
+                    _logger.LogWarning($"CharBazaar - Tried to add already existing url to success hashset: {url}");
                 }
             }
             else
             {
                 if (!_fail.Add(url))
                 {
-                    _logger.LogInformation($"CharBazaar - Tried to add already existing url to fail hashset: {url}");
+                    _logger.LogWarning($"CharBazaar - Tried to add already existing url to fail hashset: {url}");
                 }
             }
 
