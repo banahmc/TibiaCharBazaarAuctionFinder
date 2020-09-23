@@ -21,8 +21,8 @@ namespace FhatFinder.Console
         public async Task Run(CancellationToken cs)
         {
             _logger.LogInformation($"Retrieving auctions...");
-            //var auctionFilter = new RefugiaFHatAuctionSearchFilter();
-            var auctionFilter = new From100To600LevelAuctionSearchFilter();
+
+            var auctionFilter = new GetAllAuctionFilter();
             var outfitFilter = new MageOutfitWithFeruHatOutfitFilter();
 
             var stopwatch = new Stopwatch();

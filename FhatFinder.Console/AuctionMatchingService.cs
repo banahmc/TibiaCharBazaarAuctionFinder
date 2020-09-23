@@ -16,7 +16,7 @@ namespace FhatFinder.Console
             _charBazaarScraper = charBazaarScraper ?? throw new System.ArgumentNullException(nameof(charBazaarScraper));
         }
 
-        public async Task<IEnumerable<CharBazaarAuctionDto>> GetAuctionsMatchingOutfit(IAuctionFilter auctionFilter, IOutfitFilter outfitFilter, CancellationToken cs)
+        public async Task<List<CharBazaarAuctionDto>> GetAuctionsMatchingOutfit(IAuctionFilter auctionFilter, IOutfitFilter outfitFilter, CancellationToken cs)
         {
             var auctions = await _charBazaarScraper.GetAuctionsAsync(auctionFilter, cs);
             var matchingAuctions = new List<CharBazaarAuctionDto>();

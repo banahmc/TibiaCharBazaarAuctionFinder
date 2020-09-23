@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Enrichers;
 
 namespace FhatFinder.Console
 {
@@ -18,12 +19,18 @@ namespace FhatFinder.Console
         private static IServiceCollection AddSerilog(this IServiceCollection services)
         {
             var serilogLogger = new LoggerConfiguration()
-                .WriteTo.RollingFile("FHatFinder.log")
+                .WriteTo.RollingFile(
+                    "..\\..\\..\\..\\logs\\FHatFinder.log",
+                    Serilog.Events.LogEventLevel.Debug,
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} <{ThreadId}><{ThreadName}> [{Level:u3}] {Message:lj} {NewLine}{Exception}")
+                .Enrich.WithThreadId()
+                .Enrich.WithThreadName()
+                .Enrich.WithProperty(ThreadNameEnricher.ThreadNamePropertyName, "ServiceWorkerThread")
                 .CreateLogger();
 
             services.AddLogging(builder =>
             {
-                builder.SetMinimumLevel(LogLevel.Information);
+                builder.SetMinimumLevel(LogLevel.Debug);
                 builder.AddSerilog(serilogLogger, dispose: true);
             });
 

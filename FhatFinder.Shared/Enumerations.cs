@@ -1,4 +1,6 @@
-﻿namespace FhatFinder.Shared
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FhatFinder.Shared
 {
     public enum PvP
     {
@@ -67,10 +69,16 @@
     public enum Outfit
     {
         Unknown = 0,
-        Citizen = 128,
-        Hunter = 129,
-        Mage = 130,
-        Knight = 131
+        [Display(Name = "Citizen")]
+        MaleCitizen = 128,
+        [Display(Name = "Hunter")]
+        MaleHunter = 129,
+        [Display(Name = "Mage")]
+        MaleMage = 130,
+        [Display(Name = "Knight")]
+        MaleKnight = 131,
+        [Display(Name = "Summoner")]
+        FemaleSummoner = 141,
     }
 
     public enum Addon

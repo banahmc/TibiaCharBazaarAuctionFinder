@@ -10,35 +10,43 @@ namespace FhatFinder.Console
     public class Program
     {
         private static IServiceProvider _serviceProvider;
+        private static IServiceScope _serviceScope;
+        private static ILogger<FHatFinderApp> logger;
 
         public static void Main(string[] args)
         {
-            CancellationTokenSource cts = new CancellationTokenSource();
-
-            System.Console.CancelKeyPress += (s, e) =>
-            {
-                e.Cancel = true;
-                cts.Cancel();
-            };
-
-            MainAsync(cts.Token).GetAwaiter().GetResult();
-        }
-
-        private static async Task MainAsync(CancellationToken cs)
-        {
             try
             {
+                CancellationTokenSource cts = new CancellationTokenSource();
+
+                System.Console.CancelKeyPress += (s, e) =>
+                {
+                    e.Cancel = true;
+                    cts.Cancel();
+                };
+
                 RegisterServices();
-                IServiceScope scope = _serviceProvider.CreateScope();
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<FHatFinderApp>>();
-                var app = scope.ServiceProvider.GetRequiredService<IFHatFinderApp>();
-                logger.LogInformation("Starting application...");
-                await app.Run(cs);
+
+                _serviceScope = _serviceProvider.CreateScope();
+                logger = _serviceScope.ServiceProvider.GetRequiredService<ILogger<FHatFinderApp>>();
+
+                MainAsync(cts.Token).GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                logger?.LogCritical($"An unhandled error has occurred: {ex.Message}\nError Stack Trace: {ex.StackTrace}");
             }
             finally
             {
                 DisposeServices();
             }
+        }
+
+        private static async Task MainAsync(CancellationToken cs)
+        {
+            logger.LogInformation("Starting application...");
+            var app = _serviceScope.ServiceProvider.GetRequiredService<IFHatFinderApp>();
+            await app.Run(cs);
         }
 
         private static void RegisterServices()

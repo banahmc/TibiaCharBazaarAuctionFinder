@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace FhatFinder.Scraper.Parsers
 {
-    public class AuctionPageInfoParser : IParser<IDocument, IEnumerable<CharBazaarAuctionDto>>
+    public class AuctionPageInfoParser : IParser<IDocument, List<CharBazaarAuctionDto>>
     {
         private readonly IParser<IElement, CharacterNameDto> _characterNameParser;
         private readonly IParser<IElement, OutfitAndAddonDto> _outfitPraser;
@@ -18,7 +18,7 @@ namespace FhatFinder.Scraper.Parsers
             _outfitPraser = outfitPraser;
         }
 
-        public IEnumerable<CharBazaarAuctionDto> Parse(IDocument document)
+        public List<CharBazaarAuctionDto> Parse(IDocument document)
         {
             var auctions = new List<CharBazaarAuctionDto>();
             var auctionElements = document?.DocumentElement.QuerySelectorAll(".Auction");

@@ -5,7 +5,7 @@ namespace FhatFinder.Console.Filtes
 {
     public class MageOutfitWithFeruHatOutfitFilter : IOutfitFilter
     {
-        public Outfit Outfit => Outfit.Mage;
+        public Outfit Outfit => Outfit.MaleMage;
         public Addon Addons => Addon.FirstAndSecond;
     }
 }
