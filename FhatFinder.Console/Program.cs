@@ -42,11 +42,11 @@ namespace FhatFinder.Console
             }
         }
 
-        private static async Task MainAsync(CancellationToken cs)
+        private static async Task MainAsync(CancellationToken cancellationToken)
         {
             logger.LogInformation("Starting application...");
             var app = _serviceScope.ServiceProvider.GetRequiredService<IFHatFinderApp>();
-            await app.Run(cs);
+            await app.Run(cancellationToken);
         }
 
         private static void RegisterServices()

@@ -1,6 +1,7 @@
 ﻿using FhatFinder.Scraper;
 using FhatFinder.Shared.Dto;
 using FhatFinder.Shared.Filters;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,12 +14,15 @@ namespace FhatFinder.Console
 
         public AuctionMatchingService(ICharBazaarScraper charBazaarScraper)
         {
-            _charBazaarScraper = charBazaarScraper ?? throw new System.ArgumentNullException(nameof(charBazaarScraper));
+            _charBazaarScraper = charBazaarScraper ?? throw new ArgumentNullException(nameof(charBazaarScraper));
         }
 
-        public async Task<List<CharBazaarAuctionDto>> GetAuctionsMatchingOutfit(IAuctionFilter auctionFilter, IOutfitFilter outfitFilter, CancellationToken cs)
+        public async Task<List<CharBazaarAuctionDto>> GetAuctionsMatchingOutfit(
+            IAuctionFilter auctionFilter,
+            IOutfitFilter outfitFilter,
+            CancellationToken cancellationToken)
         {
-            var auctions = await _charBazaarScraper.GetAuctionsAsync(auctionFilter, cs);
+            var auctions = await _charBazaarScraper.GetAuctionsAsync(auctionFilter, cancellationToken);
             var matchingAuctions = new List<CharBazaarAuctionDto>();
 
             foreach (var auction in auctions)

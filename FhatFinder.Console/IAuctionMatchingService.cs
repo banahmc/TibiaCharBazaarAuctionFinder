@@ -8,6 +8,6 @@ namespace FhatFinder.Console
 {
     public interface IAuctionMatchingService
     {
-        Task<List<CharBazaarAuctionDto>> GetAuctionsMatchingOutfit(IAuctionFilter auctionFilter, IOutfitFilter outfitFilter, CancellationToken cs);
+        Task<List<CharBazaarAuctionDto>> GetAuctionsMatchingOutfit(IAuctionFilter auctionFilter, IOutfitFilter outfitFilter, CancellationToken cancellationToken);
     }
 }

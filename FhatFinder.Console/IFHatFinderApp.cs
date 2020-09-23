@@ -5,6 +5,6 @@ namespace FhatFinder.Console
 {
     public interface IFHatFinderApp
     {
-        Task Run(CancellationToken cs);
+        Task Run(CancellationToken cancellationToken);
     }
 }

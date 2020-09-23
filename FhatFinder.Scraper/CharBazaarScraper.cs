@@ -17,6 +17,7 @@ namespace FhatFinder.Scraper
     public class CharBazaarScraper : ICharBazaarScraper
     {
         private const int RequestLimit = 25;
+        private const int RequestLimitDelayInMilliseconds = 5000;
 
         private readonly ILogger<CharBazaarScraper> _logger;
         private readonly IBrowsingContext _browsingContext;
@@ -30,8 +31,7 @@ namespace FhatFinder.Scraper
             ILogger<CharBazaarScraper> logger,
             IBrowsingContext browsingContext,
             IParser<IDocument, PageCountDto> pageCountParser,
-            IParser<IDocument, List<CharBazaarAuctionDto>> auctionInfoParser
-        )
+            IParser<IDocument, List<CharBazaarAuctionDto>> auctionInfoParser)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _browsingContext = browsingContext ?? throw new ArgumentNullException(nameof(browsingContext));
@@ -39,14 +39,14 @@ namespace FhatFinder.Scraper
             _auctionInfoParser = auctionInfoParser ?? throw new ArgumentNullException(nameof(auctionInfoParser));
         }
 
-        public async Task<List<CharBazaarAuctionDto>> GetAuctionsAsync(IAuctionFilter auctionFilter, CancellationToken cs)
+        public async Task<List<CharBazaarAuctionDto>> GetAuctionsAsync(IAuctionFilter auctionFilter, CancellationToken cancellationToken)
         {
-            (int numberOfPages, List<CharBazaarAuctionDto> auctions) = await GetNumberOfPagesAndFirstPageAuctions(auctionFilter, cs);
+            (int numberOfPages, List<CharBazaarAuctionDto> auctions) = await GetNumberOfPagesAndFirstPageAuctions(auctionFilter, cancellationToken);
 
             if (numberOfPages > 1)
             {
                 var auctionPagesUrls = GetAuctionUrlsForFilter(auctionFilter, numberOfPages, 2);
-                var auctionsOnPages = await GetAuctions(auctionPagesUrls, cs);
+                var auctionsOnPages = await GetAuctions(auctionPagesUrls, cancellationToken);
                 if (auctionsOnPages.Any())
                 {
                     auctions.AddRange(auctionsOnPages);
@@ -80,9 +80,9 @@ namespace FhatFinder.Scraper
             return url;
         }
 
-        private async Task<List<CharBazaarAuctionDto>> GetAuctionsOnPage(string url, CancellationToken cs)
+        private async Task<List<CharBazaarAuctionDto>> GetAuctionsOnPage(string url, CancellationToken cancellationToken)
         {
-            using (var pageContent = await _browsingContext.OpenAsync(url, cs))
+            using (var pageContent = await _browsingContext.OpenAsync(url, cancellationToken))
             {
                 _logger.LogInformation($"CharBazaar - Retrieving auctions from url: {url}");
                 return GetAuctionInfoOnPage(pageContent, url);
@@ -95,23 +95,29 @@ namespace FhatFinder.Scraper
 
             if (auctionsOnPage.Count() > 0)
             {
-                _success.Add(url);
+                if (!_success.Add(url))
+                {
+                    _logger.LogInformation($"CharBazaar - Tried to add already existing url to success hashset: {url}");
+                }
             }
             else
             {
-                _fail.Add(url);
+                if (!_fail.Add(url))
+                {
+                    _logger.LogInformation($"CharBazaar - Tried to add already existing url to fail hashset: {url}");
+                }
             }
 
             return auctionsOnPage;
         }
 
-        private async Task<(int, List<CharBazaarAuctionDto>)> GetNumberOfPagesAndFirstPageAuctions(IAuctionFilter auctionFilter, CancellationToken cs)
+        private async Task<(int, List<CharBazaarAuctionDto>)> GetNumberOfPagesAndFirstPageAuctions(IAuctionFilter auctionFilter, CancellationToken cancellationToken)
         {
             var auctions = new List<CharBazaarAuctionDto>();
             var numberOfPages = 0;
 
             var url = GetFullUrl(auctionFilter);
-            using (var firstPageContent = await _browsingContext.OpenAsync(url, cs))
+            using (var firstPageContent = await _browsingContext.OpenAsync(url, cancellationToken))
             {
                 numberOfPages = _pageCountParser.Parse(firstPageContent)?.TotalPageCount ?? 0;
                 _logger.LogInformation($"CharBazaar - Total page count: {numberOfPages}");
@@ -126,7 +132,7 @@ namespace FhatFinder.Scraper
             return (numberOfPages, auctions);
         }
 
-        private async Task<List<CharBazaarAuctionDto>> GetAuctions(List<string> urls, CancellationToken cs)
+        private async Task<List<CharBazaarAuctionDto>> GetAuctions(List<string> urls, CancellationToken cancellationToken)
         {
             var auctions = new List<CharBazaarAuctionDto>();
 
@@ -144,9 +150,9 @@ namespace FhatFinder.Scraper
                 {
                     try
                     {
-                        var result = await GetAuctionsOnPage(url, cs);
+                        var result = await GetAuctionsOnPage(url, cancellationToken);
 
-                        await Task.Delay(5000);
+                        await Task.Delay(RequestLimitDelayInMilliseconds);
 
                         return result;
                     }

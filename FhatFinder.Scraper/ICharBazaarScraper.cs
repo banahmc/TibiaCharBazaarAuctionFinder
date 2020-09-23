@@ -8,6 +8,6 @@ namespace FhatFinder.Scraper
 {
     public interface ICharBazaarScraper
     {
-        Task<List<CharBazaarAuctionDto>> GetAuctionsAsync(IAuctionFilter auctionFilter, CancellationToken cs);
+        Task<List<CharBazaarAuctionDto>> GetAuctionsAsync(IAuctionFilter auctionFilter, CancellationToken cancellationToken);
     }
 }
